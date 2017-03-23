@@ -10,12 +10,16 @@ soup = BeautifulSoup(html)
 table = soup.find('table')
 
 list_of_rows = []
+counter = 1
 for row in table.findAll('tr')[1:-1]:
     list_of_cells = []
     for cell in row.findAll('td'):
-        if cell.text[0] == '(':
-            party, state = cell.text.split(',')
-            list_of_cells.append(party)
+        if cell.text == '':
+            list_of_cells.append(counter)
+            counter += 1
+        elif cell.text != '' and cell.text[0] == '(':
+            party, state = cell.text.split(', ')
+            list_of_cells.append(party.replace('(','').replace(')', ''))
             list_of_cells.append(state)
         else:
             list_of_cells.append(cell.text)
@@ -23,5 +27,5 @@ for row in table.findAll('tr')[1:-1]:
 
 outfile = open("women.csv", "wb")
 writer = csv.writer(outfile)
-writer.writerow(["seniority", "member", "party_state", "start_date"])
+writer.writerow(["seniority", "member", "party", "state", "start_date"])
 writer.writerows(list_of_rows)
